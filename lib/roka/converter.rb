@@ -41,13 +41,13 @@ class Roka::Converter
     /([sc])h([aeiou])/              => '\1ixy\2',
     /([kgszjtcdnhbpmrl])y([aeiou])/ => '\1ixy\2',
     /([td])h([aeiou])/              => '\1exy\2',
-    /n([^aeioun])/                  => 'nn\1',
+    /n([^aeioun])/                  => 'n\1',
     /([^aeioun])\1/                 => 'xtu\1',
+    /nn\b/                          => 'n',
   }
 
   EXCEPTIONS = {
     '-'    => 'ー',
-    # 'nn'   => 'ン',
     'xka'  => 'ヵ',
     'xke'  => 'ヶ',
     'xtu'  => 'ッ',
@@ -72,11 +72,10 @@ class Roka::Converter
 
   def parse
     parse_exception \
-      || parse_n \
       || parse_pattern \
       || parse_prefix \
       || parse_vowel \
-      || consume(1)
+      || parse_last
   end
 
   def parse_exception
@@ -111,8 +110,12 @@ class Roka::Converter
         vowel = @buffer[l]
 
         if (i = VOWELS_INDEX.index(vowel))
-          consume(l + 1, changes[i])
-          expand_long_sound(prefix, vowel)
+          if 'n' == @buffer[0] && 'x' != @buffer[l + 1] && 'ン' != @determined[@determined.size - 1]
+            consume(l + 1, ['ン' + VOWELS_KANA[i], changes[i]])
+          else
+            consume(l + 1, changes[i])
+            expand_long_sound(prefix, vowel)
+          end
           return true
         end
       end
@@ -132,6 +135,14 @@ class Roka::Converter
     end
   end
 
+  def parse_last
+    if 'n' == @buffer[0]
+      consume(1, 'ン')
+    else
+      consume(1)
+    end
+  end
+
   def consume(len, replacement = nil)
     replacement = @buffer[0...len] if replacement.nil?
     @determined << replacement if replacement
@@ -144,11 +155,12 @@ class Roka::Converter
 
     case vowel
     when 'o'
-      if 'h' == c
+      if 'h' == c && !@buffer[1]
+        consume(1, 'ウ')
+      elsif 'h' == c
         d, _ = peak
         if d[0] == 'h'
-          consume(1, false)
-          @determined << ['', 'オ']
+          consume(1, ['', 'オ'])
         end
       elsif !(VOWELS_INDEX + %w[n y]).include?(c)
         @determined << ['', 'オ', 'ウ']
@@ -156,40 +168,6 @@ class Roka::Converter
     when 'u'
       @determined << ['', 'ウ'] if 'y' == prefix
     end
-  end
-
-  def parse_n
-    with_state(:n) do
-      if 'n' == @buffer[0]
-        d1, b1 = peak(@buffer)
-
-        if 'n' == @buffer[1]
-          @determined << ['ン']
-          consume(1, false)
-        elsif 'n' == d1[0]
-          consume(1, 'ン')
-        elsif 'ン' != d1[0]
-          @determined += d1
-          @buffer = b1
-        else
-          d2, b2 = peak(@buffer[1..-1])
-          @determined << 'ン'
-          @determined << [d1[0], d2[0]]
-          if b1.size > b2.size
-            @buffer = b2
-          else
-            @buffer = b1
-          end
-        end
-
-        return true
-      end
-
-      false
-    end
-  end
-
-  def expand_short_sound
   end
 
   def eos?

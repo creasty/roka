@@ -60,10 +60,29 @@ end
 ### CLI
 
 ```sh
-$ roka rokadesu
-ロカデス
-ロオカデス
-ロウカデス
+$ roka koniro kono konno konyakku konnyaku ann koh
+--- koniro
+コンイロ
+コンイロオ
+コンイロウ
+コニロ
+コニロオ
+コニロウ
+--- kono
+コンオ
+コノ
+--- konno
+コンノ
+コンノオ
+コンノウ
+--- konyakku
+コニャック
+--- konnyaku
+コンニャク
+--- ann
+アン
+--- koh
+コウ
 ```
 
 
