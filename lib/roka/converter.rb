@@ -113,8 +113,8 @@ class Roka::Converter
             consume(l + 1, ['ン' + VOWELS_KANA[i], changes[i]])
           else
             consume(l + 1, changes[i])
-            expand_long_sound(prefix, vowel)
           end
+          expand_long_sound(prefix, vowel)
           return true
         end
       end
@@ -161,7 +161,7 @@ class Roka::Converter
         if d[0] == 'h'
           consume(1, ['', 'オ'])
         end
-      elsif !(VOWELS_INDEX + %w[n y]).include?(c)
+      elsif !(VOWELS_INDEX + %w[y]).include?(c) && ('n' == c && 'o' == @buffer[1])
         @determined << ['', 'オ', 'ウ']
       end
     when 'u'
