@@ -41,10 +41,9 @@ class Roka::Converter
     /([sc])h([aeiou])/              => '\1ixy\2',
     /([kgszjtcdnhbpmrl])y([aeiou])/ => '\1ixy\2',
     /([td])h([aeiou])/              => '\1exy\2',
-    /n([^aeioun])/                  => 'n\1',
     /([^aeioun])\1/                 => 'xtu\1',
     /nn\b/                          => 'n',
-    /^([^aeiou]o)([^h]?)\b/        => '\1h\2',
+    /^([^aeiou]o)([^h]?)\b/         => '\1h\2',
   }
 
   EXCEPTIONS = {
@@ -198,10 +197,10 @@ class Roka::Converter
     @determined = []
     @buffer = _buffer unless _buffer.nil?
     parse while @determined.empty? || !eos?
-    [@determined, @buffer].tap do
-      @determined = determined
-      @buffer     = buffer
-    end
+    [@determined, @buffer]
+  ensure
+    @determined = determined
+    @buffer     = buffer
   end
 
 end
