@@ -37,6 +37,7 @@ class Roka::Converter
 
   PATTERN_CHANGES = {
     /n([^aeiou])/                   => 'nn\1',
+    /yu([^aeiou])/                  => 'yuu\1',
     /([^aeiou])\1/                  => 'xtu\1',
     /([kg])w([aeiou])/              => '\1ux\2',
     /([td])w([aeiou])/              => '\1ox\2',
