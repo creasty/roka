@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Romaji to kana converter}
   spec.description   = %q{Romaji to kana converter}
   spec.homepage      = 'https://github.com/creasty/roka'
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = 'exe'
