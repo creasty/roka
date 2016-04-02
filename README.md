@@ -38,13 +38,13 @@ end
 # oyasai
 # ["オヤサイ"]
 # ono
-# ["オンオ", "オノ", "オオンオ", "オオノ", "オウンオ", "オウノ"]
+# ["オンオ", "オンオウ", "オノ", "オノウ", "オオンオ", "オオンオウ", "オオノ", "オオノウ", "オウンオ", "オウンオウ", "オウノ", "オウノウ"]
 # ohno
-# ["オンオ", "オノ", "オオンオ", "オオノ"]
+# ["オンオ", "オンオウ", "オノ", "オノウ", "オオンオ", "オオンオウ", "オオノ", "オオノウ"]
 # omi
 # ["オミ"]
 # otto
-# ["オット"]
+# ["オット", "オットウ"]
 # kohama
 # ["コハマ"]
 # kondo
@@ -52,7 +52,7 @@ end
 # kyari-pamyupamyu
 # ["キャリーパミュパミュ"]
 # hohno
-# ["ホンオ", "ホノ", "ホオンオ", "ホオノ"]
+# ["ホンオ", "ホンオウ", "ホノ", "ホノウ", "ホオンオ", "ホオンオウ", "ホオノ", "ホオノウ"]
 # hyougaki
 # ["ヒョウガキ"]
   ```
@@ -60,17 +60,25 @@ end
 ### CLI
 
 ```sh
-$ roka koniro kono konno konyakku konnyaku ann koh kondo
+$ roka koniro kono konno konyakku konnyaku ann koh kondo yuna sato
 --- koniro
 コンイロ
+コンイロウ
 コニロ
+コニロウ
 --- kono
 コンオ
+コンオウ
 コノ
+コノウ
 コオンオ
+コオンオウ
 コオノ
+コオノウ
 コウンオ
+コウンオウ
 コウノ
+コウノウ
 --- konno
 コンノ
 コンノウ
@@ -86,6 +94,14 @@ $ roka koniro kono konno konyakku konnyaku ann koh kondo
 --- kondo
 コンド
 コンドウ
+--- yuna
+ユンア
+ユナ
+ユウンア
+ユウナ
+--- sato
+サト
+サトウ
 ```
 
 
