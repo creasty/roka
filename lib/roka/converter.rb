@@ -62,7 +62,6 @@ class Roka::Converter
   def initialize(str)
     @buffer     = regulate(str)
     @determined = []
-    @states     = []
   end
 
   def convert
@@ -201,29 +200,6 @@ class Roka::Converter
     [@determined, @buffer].tap do
       @determined = determined
       @buffer     = buffer
-    end
-  end
-
-  def with_state(state)
-    return false if state == current_state
-    push_state!(state)
-    yield
-  ensure
-    pop_state!(state)
-  end
-
-  def current_state
-    @states[0] || :default
-  end
-
-  def push_state!(state)
-    @states.unshift(state)
-  end
-
-  def pop_state!(state)
-    s = @states.shift
-    if s && s != state
-      raise 'Unblanced pop: attempt to pop `%s` instead of `%s`' % [state, s]
     end
   end
 
