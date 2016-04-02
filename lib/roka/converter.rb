@@ -44,7 +44,7 @@ class Roka::Converter
     /n([^aeioun])/                  => 'n\1',
     /([^aeioun])\1/                 => 'xtu\1',
     /nn\b/                          => 'n',
-    /^(n[^aeiou]o)([^h]|\b)/        => '\1h\2',
+    /^([^aeiou]o)([^h]?)\b/        => '\1h\2',
   }
 
   EXCEPTIONS = {
