@@ -37,7 +37,6 @@ class Roka::Converter
 
   PATTERN_CHANGES = {
     /n([^aeiou])/                   => 'nn\1',
-    /yu([^aeiou])/                  => 'yuu\1',
     /([^aeiou])\1/                  => 'xtu\1',
     /([kg])w([aeiou])/              => '\1ux\2',
     /([td])w([aeiou])/              => '\1ox\2',
@@ -111,7 +110,7 @@ class Roka::Converter
 
         if (i = VOWELS_INDEX.index(vowel))
           consume(l + 1, changes[i])
-          expand_long_sound(vowel)
+          expand_long_sound(prefix, vowel)
           return true
         end
       end
@@ -124,7 +123,7 @@ class Roka::Converter
     vowel = @buffer[0]
     if (i = VOWELS_INDEX.index(vowel))
       consume(1, VOWELS_KANA[i])
-      expand_long_sound(vowel)
+      expand_long_sound(nil, vowel)
       true
     else
       false
@@ -138,18 +137,22 @@ class Roka::Converter
     true
   end
 
-  def expand_long_sound(vowel)
-    return unless 'o' == vowel
+  def expand_long_sound(prefix, vowel)
     peak = @buffer[0]
 
-    if 'h' == peak
-      u1 = self.class.new(@buffer).tap(&:parse).determined
-      if u1[0] == 'h'
-        consume(1, false)
-        @determined << ['オ']
+    case vowel
+    when 'o'
+      if 'h' == peak
+        u1 = self.class.new(@buffer).tap(&:parse).determined
+        if u1[0] == 'h'
+          consume(1, false)
+          @determined << ['オ']
+        end
+      elsif !(VOWELS_INDEX + %w[n y]).include?(peak)
+        @determined << ['オ', 'ウ']
       end
-    elsif !(VOWELS_INDEX + %w[n y]).include?(peak)
-      @determined << ['オ', 'ウ']
+    when 'u'
+      @determined << ['ウ'] if 'y' == prefix
     end
   end
 
