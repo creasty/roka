@@ -36,13 +36,13 @@ class Roka::Converter
   }
 
   PATTERN_CHANGES = {
-    /n([^aeiou])/                   => 'nn\1',
-    /([^aeiou])\1/                  => 'xtu\1',
     /([kg])w([aeiou])/              => '\1ux\2',
     /([td])w([aeiou])/              => '\1ox\2',
     /([sc])h([aeiou])/              => '\1ixy\2',
     /([kgszjtcdnhbpmrl])y([aeiou])/ => '\1ixy\2',
     /([td])h([aeiou])/              => '\1exy\2',
+    /n([^aeioun])/                  => 'nn\1',
+    /([^aeioun])\1/                 => 'xtu\1',
   }
 
   EXCEPTIONS = {
@@ -60,8 +60,9 @@ class Roka::Converter
   attr_reader :determined
 
   def initialize(str)
-    @buffer  = regulate(str)
+    @buffer     = regulate(str)
     @determined = []
+    @states     = []
   end
 
   def convert
@@ -139,17 +140,17 @@ class Roka::Converter
   end
 
   def expand_long_sound(prefix, vowel)
-    peak = @buffer[0]
+    c = @buffer[0]
 
     case vowel
     when 'o'
-      if 'h' == peak
-        u1 = self.class.new(@buffer).tap(&:parse).determined
-        if u1[0] == 'h'
+      if 'h' == c
+        d, _ = peak
+        if d[0] == 'h'
           consume(1, false)
           @determined << ['', 'オ']
         end
-      elsif !(VOWELS_INDEX + %w[n y]).include?(peak)
+      elsif !(VOWELS_INDEX + %w[n y]).include?(c)
         @determined << ['', 'オ', 'ウ']
       end
     when 'u'
@@ -158,18 +159,34 @@ class Roka::Converter
   end
 
   def parse_n
-    puts @buffer
-    if 'n' == @buffer[0]
-      u1 = self.class.new(@buffer[1..-1]).tap(&:parse).determined
-      u2 = self.class.new(@buffer[2..-1]).tap(&:parse).determined
-      p u1
-      p u2
-      consume(2, false)
-      @determined << ['ン', u1, u2]
-      return true
-    end
+    with_state(:n) do
+      if 'n' == @buffer[0]
+        d1, b1 = peak(@buffer)
 
-    false
+        if 'n' == @buffer[1]
+          @determined << ['ン']
+          consume(1, false)
+        elsif 'n' == d1[0]
+          consume(1, 'ン')
+        elsif 'ン' != d1[0]
+          @determined += d1
+          @buffer = b1
+        else
+          d2, b2 = peak(@buffer[1..-1])
+          @determined << 'ン'
+          @determined << [d1[0], d2[0]]
+          if b1.size > b2.size
+            @buffer = b2
+          else
+            @buffer = b1
+          end
+        end
+
+        return true
+      end
+
+      false
+    end
   end
 
   def expand_short_sound
@@ -195,6 +212,41 @@ class Roka::Converter
 
   def regulate(str)
     NKF.nkf('-m0 -Z1 -w', str.to_s.downcase).gsub(/[^a-z-]+/, ' ')
+  end
+
+  def peak(_buffer = nil)
+    determined  = @determined
+    buffer      = @buffer
+    @determined = []
+    @buffer = _buffer unless _buffer.nil?
+    parse while @determined.empty? || !eos?
+    [@determined, @buffer].tap do
+      @determined = determined
+      @buffer     = buffer
+    end
+  end
+
+  def with_state(state)
+    return false if state == current_state
+    push_state!(state)
+    yield
+  ensure
+    pop_state!(state)
+  end
+
+  def current_state
+    @states[0] || :default
+  end
+
+  def push_state!(state)
+    @states.unshift(state)
+  end
+
+  def pop_state!(state)
+    s = @states.shift
+    if s && s != state
+      raise 'Unblanced pop: attempt to pop `%s` instead of `%s`' % [state, s]
+    end
   end
 
 end
