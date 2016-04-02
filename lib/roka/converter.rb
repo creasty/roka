@@ -44,6 +44,7 @@ class Roka::Converter
     /n([^aeioun])/                  => 'n\1',
     /([^aeioun])\1/                 => 'xtu\1',
     /nn\b/                          => 'n',
+    /^(n[^aeiou]o)([^h]|\b)/        => '\1h\2',
   }
 
   EXCEPTIONS = {
@@ -155,7 +156,7 @@ class Roka::Converter
     case vowel
     when 'o'
       if 'h' == c && !@buffer[1]
-        consume(1, 'ウ')
+        consume(1, ['', 'ウ'])
       elsif 'h' == c
         d, _ = peak
         if d[0] == 'h'

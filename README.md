@@ -60,20 +60,19 @@ end
 ### CLI
 
 ```sh
-$ roka koniro kono konno konyakku konnyaku ann koh
+$ roka koniro kono konno konyakku konnyaku ann koh kondo
 --- koniro
 コンイロ
-コンイロオ
-コンイロウ
 コニロ
-コニロオ
-コニロウ
 --- kono
 コンオ
 コノ
+コオンオ
+コオノ
+コウンオ
+コウノ
 --- konno
 コンノ
-コンノオ
 コンノウ
 --- konyakku
 コニャック
@@ -82,7 +81,11 @@ $ roka koniro kono konno konyakku konnyaku ann koh
 --- ann
 アン
 --- koh
+コ
 コウ
+--- kondo
+コンド
+コンドウ
 ```
 
 
