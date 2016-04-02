@@ -47,7 +47,7 @@ class Roka::Converter
 
   EXCEPTIONS = {
     '-'    => 'ー',
-    'nn'   => 'ン',
+    # 'nn'   => 'ン',
     'xka'  => 'ヵ',
     'xke'  => 'ヶ',
     'xtu'  => 'ッ',
@@ -71,6 +71,7 @@ class Roka::Converter
 
   def parse
     parse_exception \
+      || parse_n \
       || parse_pattern \
       || parse_prefix \
       || parse_vowel \
@@ -146,14 +147,32 @@ class Roka::Converter
         u1 = self.class.new(@buffer).tap(&:parse).determined
         if u1[0] == 'h'
           consume(1, false)
-          @determined << ['オ']
+          @determined << ['', 'オ']
         end
       elsif !(VOWELS_INDEX + %w[n y]).include?(peak)
-        @determined << ['オ', 'ウ']
+        @determined << ['', 'オ', 'ウ']
       end
     when 'u'
-      @determined << ['ウ'] if 'y' == prefix
+      @determined << ['', 'ウ'] if 'y' == prefix
     end
+  end
+
+  def parse_n
+    puts @buffer
+    if 'n' == @buffer[0]
+      u1 = self.class.new(@buffer[1..-1]).tap(&:parse).determined
+      u2 = self.class.new(@buffer[2..-1]).tap(&:parse).determined
+      p u1
+      p u2
+      consume(2, false)
+      @determined << ['ン', u1, u2]
+      return true
+    end
+
+    false
+  end
+
+  def expand_short_sound
   end
 
   def eos?
@@ -165,7 +184,7 @@ class Roka::Converter
 
     @determined.each do |det|
       if det.is_a?(Array)
-        tree += tree.product(det).map(&:join)
+        tree = tree.product(det).map(&:join)
       else
         tree.each { |t| t << det }
       end
