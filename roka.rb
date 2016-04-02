@@ -60,14 +60,12 @@ class RomajiConverter
   attr_reader :determined
 
   def self.convert(str)
-    new(str).results
+    new(str).tap(&:convert).results
   end
 
   def initialize(str)
     @buffer  = regulate(str)
     @determined = []
-
-    convert
   end
 
   def convert
