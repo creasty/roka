@@ -36,14 +36,14 @@ class Roka::Converter
   }
 
   PATTERN_CHANGES = {
-    /([kg])w([aeiou])/              => '\1ux\2',
-    /([td])w([aeiou])/              => '\1ox\2',
-    /([sc])h([aeiou])/              => '\1ixy\2',
-    /([kgszjtcdnhbpmrl])y([aeiou])/ => '\1ixy\2',
-    /([td])h([aeiou])/              => '\1exy\2',
-    /([^aeioun])\1/                 => 'xtu\1',
-    /nn\b/                          => 'n',
-    /^([^aeiou]o)([^h]?)\b/         => '\1h\2',
+    /^([kg])w([aeiou])/              => '\1ux\2',
+    /^([td])w([aeiou])/              => '\1ox\2',
+    /^([sc])h([aeiou])/              => '\1ixy\2',
+    /^([kgszjtcdnhbpmrl])y([aeiou])/ => '\1ixy\2',
+    /^([td])h([aeiou])/              => '\1exy\2',
+    /^([^aeioun])\1/                 => 'xtu\1',
+    /^nn\b/                          => 'n',
+    /^([^aeiou]o)([^h]?)\b/          => '\1h\2',
   }
 
   EXCEPTIONS = {
@@ -90,8 +90,7 @@ class Roka::Converter
 
   def parse_pattern
     PATTERN_CHANGES.each do |pattern, replacement|
-      r = %r{^#{pattern.source}}
-      buffer = @buffer.sub(r, replacement)
+      buffer = @buffer.sub(pattern, replacement)
 
       unless buffer == @buffer
         @buffer = buffer
