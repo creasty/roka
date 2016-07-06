@@ -137,7 +137,7 @@ class Roka::Converter
     if 'n' == @buffer[0]
       consume(1, 'ン')
     else
-      consume(1)
+      consume(1, @buffer[0])
     end
   end
 
@@ -187,7 +187,7 @@ class Roka::Converter
   end
 
   def regulate(str)
-    NKF.nkf('-m0 -Z1 -w', str.to_s.downcase).gsub(/[^a-z-]+/, ' ')
+    NKF.nkf('-m0 -Z1 -w', str.to_s.downcase)
   end
 
   def peak(_buffer = nil)
