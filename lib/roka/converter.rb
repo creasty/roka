@@ -38,7 +38,8 @@ class Roka::Converter
   PREFIX_CHANGES = {
     /^([kg])w([aeiou])/              => '\1ux\2',
     /^([td])w([aeiou])/              => '\1ox\2',
-    /^([sc])h([aeiou])/              => '\1ixy\2',
+    /^sh([aeiou])/                   => 'sixy\1',
+    /^ch([aeiou])/                   => 'tixy\1',
     /^([kgszjtcdnhbpmrl])y([aeiou])/ => '\1ixy\2',
     /^([td])h([aeiou])/              => '\1exy\2',
     /^([^aeioun])\1/                 => 'xtu\1',
