@@ -5,7 +5,7 @@ class Roka::Converter
   VOWELS_INDEX = %w[a  i  u  e  o ]
   VOWELS_KANA  = %w[ア イ ウ エ オ]
 
-  PREFIX_CHANGES = {
+  SOUND_CHANGES = {
     'ts' => %w[ツァ ツィ ツ   ツェ ツォ],
 
     'xy' => %w[ャ   ィ   ュ   ェ   ョ  ],
@@ -35,7 +35,7 @@ class Roka::Converter
     'c'  => %w[カ   シ   ク   セ   コ  ],
   }
 
-  PATTERN_CHANGES = {
+  PREFIX_CHANGES = {
     /^([kg])w([aeiou])/              => '\1ux\2',
     /^([td])w([aeiou])/              => '\1ox\2',
     /^([sc])h([aeiou])/              => '\1ixy\2',
@@ -71,8 +71,8 @@ class Roka::Converter
 
   def parse
     parse_exception \
-      || parse_pattern \
       || parse_prefix \
+      || parse_sound \
       || parse_vowel \
       || parse_last
   end
@@ -88,8 +88,8 @@ class Roka::Converter
     false
   end
 
-  def parse_pattern
-    PATTERN_CHANGES.each do |pattern, replacement|
+  def parse_prefix
+    PREFIX_CHANGES.each do |pattern, replacement|
       buffer = @buffer.sub(pattern, replacement)
 
       unless buffer == @buffer
@@ -101,8 +101,8 @@ class Roka::Converter
     false
   end
 
-  def parse_prefix
-    PREFIX_CHANGES.each do |prefix, changes|
+  def parse_sound
+    SOUND_CHANGES.each do |prefix, changes|
       if @buffer.start_with?(prefix)
         l = prefix.size
         vowel = @buffer[l]
