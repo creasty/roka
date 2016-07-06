@@ -42,7 +42,7 @@ class Roka::Converter
     /^ch([aeiou])/                   => 'tixy\1',
     /^([kgszjtcdnhbpmrl])y([aeiou])/ => '\1ixy\2',
     /^([td])h([aeiou])/              => '\1exy\2',
-    /^([^aeioun])\1/                 => 'xtu\1',
+    /^([bcdfghjklmnprstvwxyz])\1/    => 'xtu\1',
     /^nn\b/                          => 'n',
     /^([^aeiou]o)([^h]?)\b/          => '\1h\2',
   }
